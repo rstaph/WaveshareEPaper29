@@ -24,7 +24,7 @@
  * THE SOFTWARE.
  */
 
-#include "WaveshareEPaper29b.h"
+#include "WaveshareEPaper29.h"
 
 #define COLORED     0
 #define UNCOLORED   1
@@ -49,11 +49,11 @@ void setup() {
 
   /**
     * Due to RAM not enough in Arduino UNO, a frame buffer is not allowed.
-    * In this case, a smaller image buffer is allocated and you have to 
+    * In this case, a smaller image buffer is allocated and you have to
     * update a partial display several times.
     * 1 byte = 8 pixels, therefore you have to set 8*N pixels at a time.
     */
-  Paint paint(image, 128, 18);    //width should be the multiple of 8 
+  Paint paint(image, 128, 18);    //width should be the multiple of 8
 
   paint.Clear(UNCOLORED);
   paint.DrawStringAt(0, 0, "e-Paper Demo", &Font12, COLORED);
@@ -63,7 +63,7 @@ Serial.print("e-Paper Demo");
   paint.DrawStringAt(2, 2, "Hello world", &Font16, UNCOLORED);
   epd.SetPartialWindowRed(paint.GetImage(), 0, 64, paint.GetWidth(), paint.GetHeight());
 Serial.print("Hello World");
-  
+
   paint.SetWidth(64);
   paint.SetHeight(64);
 
@@ -73,7 +73,7 @@ Serial.print("Hello World");
   paint.DrawLine(40, 0, 0, 50, COLORED);
   epd.SetPartialWindowBlack(paint.GetImage(), 8, 120, paint.GetWidth(), paint.GetHeight());
 Serial.print("Rectangle");
-  
+
   paint.Clear(UNCOLORED);
   paint.DrawCircle(32, 32, 30, COLORED);
   epd.SetPartialWindowBlack(paint.GetImage(), 64, 120, paint.GetWidth(), paint.GetHeight());
@@ -707,4 +707,3 @@ const unsigned char IMAGE_RED[] = { /* 0X00,0X01,0X80,0X00,0X28,0X01, */
   0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,
   0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,
 };
-
