@@ -23,6 +23,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+ /**
+ * May 06 2018: port to Particle Photon by Martin Schreiber @gruemscheli (twitter)
+ */
 
 #ifndef EPD2IN9_H
 #define EPD2IN9_H
@@ -64,7 +67,23 @@ public:
     unsigned long width;
     unsigned long height;
 
-    Epd();
+    Epd(
+        SPIClass& spiPort,
+        // dispDinPin, // mapped to SPI MOSI pin (Photon A5)
+        // dispClkPin, // mapped to SPI SCLK pin (Photon A3)
+        int16_t dispCsPin, // mapped to SPI SS pin (Photon A2)
+        int16_t dispDcPin,
+        int16_t dispResetPin,
+        int16_t dispBusyPin
+    ): EpdIf(
+      spiPort,
+      dispCsPin,
+      dispDcPin,
+      dispResetPin,
+      dispBusyPin
+    ), width(EPD_WIDTH), height(EPD_HEIGHT)
+    {}
+
     ~Epd();
     int  Init(const unsigned char* lut);
     void SendCommand(unsigned char command);
@@ -84,17 +103,12 @@ public:
     void Sleep(void);
 
 private:
-    unsigned int reset_pin;
-    unsigned int dc_pin;
-    unsigned int cs_pin;
-    unsigned int busy_pin;
     const unsigned char* lut;
-
     void SetLut(const unsigned char* lut);
     void SetMemoryArea(int x_start, int y_start, int x_end, int y_end);
     void SetMemoryPointer(int x, int y);
 };
 
-#endif /* EPD2IN9_H */
+#endif // EPD2IN9_H
 
 /* END OF FILE */

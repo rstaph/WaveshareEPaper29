@@ -24,28 +24,55 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+ /**
+ * May 06 2018: port to Particle Photon by Martin Schreiber @gruemscheli (twitter)
+ */
 
 #ifndef EPDIF_H
 #define EPDIF_H
 
-#include <arduino.h>
-
-// Pin definition
-#define RST_PIN         8
-#define DC_PIN          9
-#define CS_PIN          10
-#define BUSY_PIN        7
+#include <Arduino.h> // for int16_t
+#include <SPI.h> // for SPIClass
 
 class EpdIf {
+
 public:
-    EpdIf(void);
+
+    EpdIf(
+        SPIClass& spiPort,
+        // dispDinPin, // mapped to SPI MOSI pin (Photon A5)
+        // dispClkPin, // mapped to SPI SCLK pin (Photon A3)
+        int16_t dispCsPin, // mapped to SPI SS pin (Photon A2)
+        int16_t dispDcPin,
+        int16_t dispResetPin,
+        int16_t dispBusyPin
+    ) : _spiPort(spiPort),
+        // dispDinPin,
+        // dispClkPin,
+        _pin_disp_cs(dispCsPin),
+        _pin_disp_dc(dispDcPin),
+        _pin_disp_rst(dispResetPin),
+        _pin_disp_bsy(dispBusyPin)
+    {}
+
     ~EpdIf(void);
 
-    static int  IfInit(void);
-    static void DigitalWrite(int pin, int value); 
-    static int  DigitalRead(int pin);
-    static void DelayMs(unsigned int delaytime);
-    static void SpiTransfer(unsigned char data);
+    int  IfInit(void);
+    void DigitalWrite(int pin, int value);
+    int  DigitalRead(int pin);
+    void DelayMs(unsigned int delaytime);
+    void SpiTransfer(unsigned char data);
+
+protected:
+    SPIClass& _spiPort;
+    int16_t _pin_disp_cs;
+    int16_t _pin_disp_dc;
+    int16_t _pin_disp_rst;
+    int16_t _pin_disp_bsy;
+    bool _1stInitialized;
+
 };
 
-#endif
+#endif // EPDIF_H
+
+/* END OF FILE */

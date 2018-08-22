@@ -24,22 +24,22 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+ /**
+ * May 06 2018: port to Particle Photon by Martin Schreiber @gruemscheli (twitter)
+ */
 
 #include "epdif.h"
-#include <spi.h>
-
-EpdIf::EpdIf() {
-};
 
 EpdIf::~EpdIf() {
+  
 };
 
 void EpdIf::DigitalWrite(int pin, int value) {
-    digitalWrite(pin, value);
+    digitalWriteFast(pin, value);
 }
 
 int EpdIf::DigitalRead(int pin) {
-    return digitalRead(pin);
+    return pinReadFast(pin);
 }
 
 void EpdIf::DelayMs(unsigned int delaytime) {
@@ -47,18 +47,29 @@ void EpdIf::DelayMs(unsigned int delaytime) {
 }
 
 void EpdIf::SpiTransfer(unsigned char data) {
-    digitalWrite(CS_PIN, LOW);
-    SPI.transfer(data);
-    digitalWrite(CS_PIN, HIGH);
+    digitalWrite(_pin_disp_cs, LOW);
+    _spiPort.transfer(data);
+    digitalWrite(_pin_disp_cs, HIGH);
 }
 
 int EpdIf::IfInit(void) {
-    pinMode(CS_PIN, OUTPUT);
-    pinMode(RST_PIN, OUTPUT);
-    pinMode(DC_PIN, OUTPUT);
-    pinMode(BUSY_PIN, INPUT); 
-    SPI.beginTransaction(SPISettings(2000000, MSBFIRST, SPI_MODE0));
-    SPI.begin();
+    pinMode(_pin_disp_cs, OUTPUT);
+    pinMode(_pin_disp_rst, OUTPUT);
+    pinMode(_pin_disp_dc, OUTPUT);
+    pinMode(_pin_disp_bsy, INPUT);
+    // End existing transaction. Important when reinitializing.
+    // On scenario is when a reinitialization needs to be done
+    // to switch from full updates to partial updates.
+    if (!_1stInitialized) {
+      _1stInitialized = true;
+    }
+    else {
+      _spiPort.end();
+      _spiPort.endTransaction();
+    }
+    _spiPort.beginTransaction(SPISettings(2000000, MSBFIRST, SPI_MODE0));
+    _spiPort.begin();
     return 0;
 }
 
+/* END OF FILE */

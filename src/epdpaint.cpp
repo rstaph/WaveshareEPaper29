@@ -318,25 +318,3 @@ void Paint::DrawFilledCircle(int x, int y, int radius, int colored) {
 
 /* END OF FILE */
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
